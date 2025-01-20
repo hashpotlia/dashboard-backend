@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background-color: #1e1e1e;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #333;
+            color: #f90;
+        }
+        tr:nth-child(even) {
+            background-color: #292929;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #f90;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #ffb84d;
+        }
+    </style>
+</head>
+<body>
+    <div id="common-bookmarks">
+        <h1>Common Bookmarks</h1>
+        <table id="bookmarksTable">
+            <thead>
+                <tr>
+                    <th>DESCRIPTION</th>
+                    <th>LINK</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Pre-existing rows are placed here -->
+                <tr>
+                    <td>Issues Ticketing</td>
+                    <td><a href="https://issues.amazon.com" target="_blank">issues.amazon.com</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Form to Add New Bookmark -->
+        <div>
+            <h3>Add New Bookmark</h3>
+            <input type="text" id="newDescription" placeholder="Enter description">
+            <input type="text" id="newLink" placeholder="Enter link (e.g., https://example.com)">
+            <button onclick="addBookmark()">Add</button>
+        </div>
+    </div>
+    <script>
+        function addBookmark() {
+            const description = document.getElementById('newDescription').value.trim();
+            const link = document.getElementById('newLink').value.trim();
+            if (!description || !link) {
+                alert('Please fill in both fields.');
+                return;
+            }
+            // Send data to the backend
+            fetch('https://your-backend-url.com/add-bookmark', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description, link }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Bookmark added successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
