@@ -1,8 +1,17 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors'); // Import CORS
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Allow requests from all origins (or specify your GitHub Pages domain)
+app.use(cors({ origin: '*' }));
+app.use(express.json());
+const HTML_FILE_PATH = path.join(__dirname, 'dashboard.html');
+// Existing routes remain unchanged...
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
 // Path to the HTML file
 const HTML_FILE_PATH = path.join(__dirname, 'dashboard.html');
 // Middleware to parse JSON data
