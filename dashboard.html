@@ -3,32 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>DCO Garage</title>
     <style>
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
             background-color: #121212;
             color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
+
+        .sidebar {
+            width: 240px;
+            background-color: #1e1e1e;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 53px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: #ffffff;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #444;
+        }
+
+        .sidebar .active {
+            background-color: #f90;
+            color: #000;
+        }
+
+        .content {
+            margin-left: 240px;
+            padding: 80px 20px 20px;
+            transition: margin-left 0.3s;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .content h1 {
+            color: #f90;
+            margin-bottom: 20px;
+        }
+
         table {
             width: 100%;
-            margin-top: 20px;
             border-collapse: collapse;
+            margin-top: 20px;
             background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
-        th, td {
-            padding: 10px;
+
+        table th, table td {
+            padding: 15px;
             text-align: left;
             border-bottom: 1px solid #444;
         }
-        th {
+
+        table th {
             background-color: #333;
             color: #f90;
         }
-        tr:nth-child(even) {
+
+        table tr:nth-child(even) {
             background-color: #292929;
         }
-        input, button {
+
+        table tr:hover {
+            background-color: #444;
+        }
+
+        a {
+            color: #f90;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: #ffb84d;
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+            margin: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        ul li:last-child {
+            margin-bottom: 0;
+        }
+
+        .top-menu {
+            display: flex;
+            justify-content: flex-start;
+            background-color: #1e1e1e;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            position: fixed;
+            top: 70px;
+            top: 50px;
+            left: 240px;
+            right: 0;
+            z-index: 999;
+        }
+
+        .top-menu a {
+            margin-right: 20px;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .top-menu a:hover {
+            background-color: #444;
+        }
+
+        .top-menu .active {
+            background-color: #f90;
+            color: #000;
+        }
+
+        .search-bar {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            width: 300px;
+        }
+
+        .search-bar input::placeholder {
+            color: #888;
+        }
+
+                footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            font-size: 14px;
+        }
+		
+		.content {
+            padding-bottom: 50px; /* Adds space to prevent content from being hidden by the footer */
+        }
+		input, button {
             padding: 10px;
             margin: 5px 0;
         }
@@ -45,6 +196,33 @@
     </style>
 </head>
 <body>
+
+.search-bar input::placeholder {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+<header style="background-color: #1e1e1e; padding: 10px; text-align: center; color: #ffffff; font-size: 24px; position: fixed; top: 0; left: 240px; right: 0; z-index: 1000;">WELCOME TO DCO GARAGE !!! <i class="fa fa-coffee" style="font-size:24px;color:red"></i> <!---<i style="font-size:24px" class="fa">&#xf0f4;</i>--> </header>
+<div class="sidebar">
+	<!--<h4 style="color: #ffffff; text-align: center; padding: 10px 0;">WELCOME TO DCO GARAGE!</h4>-->
+    <a href="#" onclick="showContent('dashboard', this)" class="active">DASHBOARD</a>
+    <a href="#" onclick="showContent('sev-monitor', this)">SEV MONITOR</a>
+    <a href="#" onclick="showContent('queue-monitor', this)">QUEUE MONITOR</a>
+    <a href="#" onclick="showContent('toolkit', this)">TOOLKIT</a>
+</div>
+
+<div id="dashboard" class="content">
+    <!--<h1>DASHBOARD</h1>-->
+
+    <div class="top-menu">
+        <a href="#" onclick="showTopMenu('common-bookmarks', this)" class="active">COMMON BOOKMARKS</a>
+        <a href="#" onclick="showTopMenu('wiki-resources', this)">WIKI RESOURCES</a>
+        <a href="#" onclick="showTopMenu('domains-collection', this)">DOMAINS COLLECTION</a>
+        <a href="#" onclick="showTopMenu('updates', this)">UPDATES</a>
+    </div>
+
     <div id="common-bookmarks">
         <h1>Common Bookmarks</h1>
         <table id="bookmarksTable">
@@ -66,7 +244,7 @@
             <button onclick="addBookmark()">Add</button>
         </div>
     </div>
-    <script>
+	<script>
         // Backend API URL
         const API_BASE_URL = 'https://dashboard-backend-zu2y.onrender.com';
         // Fetch and display bookmarks
@@ -120,5 +298,180 @@
         // Load bookmarks on page load
         document.addEventListener('DOMContentLoaded', loadBookmarks);
     </script>
+
+    <div id="wiki-resources" class="hidden">
+	<p>This page is undercontruction!!!</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>WIKI RESOURCES</th>
+                    <th>LINK</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>SIM Ticketing</td>
+                    <td><a href="https://t.corp.amazon.com/issues/all-my-groups" target="_blank">t.corp.amazon.com</a></td>
+                </tr>
+                <tr>
+                    <td>Issue Ticketing</td>
+                    <td><a href="https://sim.amazon.com/issues/search?q=status%3A(Open)+containingFolder%3A(55a7bab7-b4d0-4cf9-b202-459006854c45)&sort=lastUpdatedConversationDate+desc&selectedDocument=f7e9ae1a-6954-4f3a-9d7d-3ee2597dc426" target="_blank">sim.amazon.com</a></td>
+                </tr>
+				<tr>
+                    <td>Boost</td>
+                    <td><a href="https://app.boost.aws.a2z.com/platform" target="_blank">app.boost.aws.a2z.com</a></td>
+                </tr>
+				<tr>
+                    <td>Mobility</td>
+                    <td><a href="https://mobility.amazon.com/" target="_blank">mobility.amazon.com</a></td>
+                </tr>
+				<tr>
+                    <td>Tavern</td>
+                    <td><a href="https://tavern.corp.amazon.com/" target="_blank">tavern.corp.amazon.com</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="domains-collection" class="hidden">
+        <p>Content for Domains Collection goes here.</p>
+    </div>
+
+    <div id="updates" class="hidden">
+        <p>Content for Updates goes here.</p>
+    </div>
+</div>
+
+<div id="sev-monitor" class="content hidden">
+    <!--<h1>SEV MONITOR</h1>-->
+    <p>Content for Sev Monitor goes here.</p>
+</div>
+
+<div id="queue-monitor" class="content hidden">
+    <!--<h1>QUEUE MONITOR</h1>-->
+    <p>Content for Queue Monitor goes here.</p>
+</div>
+
+<div id="toolkit" class="content hidden">
+    <!--<h1>TOOLKIT</h1>-->
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search toolkit..." onkeyup="searchToolkit()">
+    </div>
+
+    <table id="toolkitTable">
+        <thead>
+            <tr>
+                <th>CATEGORY</th>
+                <th>DETAILS</th>
+                <th>COMMANDS</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>hosts</td>
+                <td>For Prod</td>
+                <td>curl dco.amazon.com/tps | env bash</td>
+            </tr>
+            <tr>
+                <td>hosts</td>
+                <td>Checkhost</td>
+                <td>curl dco.amazon.com/DCOSE/checkhost.sh | env bash</td>
+            </tr>
+            <tr>
+                <td>hosts</td>
+                <td>AutoDiag For Tankers</td>
+                <td>curl dco.amazon.com/mward/dcodiag/hosts/prod_tanker12.sh | env bash</td>
+            </tr>
+            <tr>
+                <td>hosts</td>
+                <td>DCODiags (w/o networking)</td>
+                <td>/opt/datatech/dcodiag</td>
+            </tr>
+            <tr>
+                <td>Network Uplinks</td>
+                <td>Gather network uplink data</td>
+                <td>curl dco.amazon.com/network-uplinks | bash</td>
+            </tr>
+            <tr>
+                <td>Console Information</td>
+                <td>Retrieve console details</td>
+                <td>curl dco.amazon.com/console-info | bash</td>
+            </tr>
+            <tr>
+                <td>Software Raid Devices</td>
+                <td>Information about RAID devices</td>
+                <td>curl dco.amazon.com/raid-info | bash</td>
+            </tr>
+            <tr>
+                <td>Smart Data</td>
+                <td>Gather smart data for drives</td>
+                <td>curl dco.amazon.com/smart-data | bash</td>
+            </tr>
+            <tr>
+                <td>System Logs</td>
+                <td>Decoded SEL logs and errors</td>
+                <td>curl dco.amazon.com/system-logs | bash</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function showContent(section, element) {
+        const sections = ['dashboard', 'sev-monitor', 'queue-monitor', 'toolkit'];
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+        sections.forEach(sec => {
+            document.getElementById(sec).classList.add('hidden');
+        });
+        document.getElementById(section).classList.remove('hidden');
+
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function showTopMenu(menu, element) {
+        const menus = ['common-bookmarks', 'wiki-resources', 'domains-collection', 'updates'];
+        const topMenuLinks = document.querySelectorAll('.top-menu a');
+
+        menus.forEach(m => {
+            document.getElementById(m).classList.add('hidden');
+        });
+        document.getElementById(menu).classList.remove('hidden');
+
+        topMenuLinks.forEach(link => link.classList.remove('active'));
+        element.classList.add('active');
+    }
+
+    function searchToolkit() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const table = document.getElementById('toolkitTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            let found = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                if (cells[j].innerText.toLowerCase().includes(input)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found || input === "") {
+                rows[i].style.display = "table-row";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+    <footer style="margin-top: 20px; text-align: center; padding: 10px; background-color: #1e1e1e; color: #ffffff;; font-size: 14px;">
+        <b>made possible with the help of:</b> coffee, coffee & coffee  &#10084<br>
+        
+    </footer>
 </body>
 </html>
