@@ -55,11 +55,7 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Pre-existing rows are placed here -->
-                <tr>
-                    <td>Issues Ticketing</td>
-                    <td><a href="https://issues.amazon.com" target="_blank">issues.amazon.com</a></td>
-                </tr>
+                <!-- Rows will be dynamically populated -->
             </tbody>
         </table>
         <!-- Form to Add New Bookmark -->
@@ -71,30 +67,58 @@
         </div>
     </div>
     <script>
-        function addBookmark() {
+        // Backend API URL
+        const API_BASE_URL = 'https://dashboard-backend-zu2y.onrender.com';
+        // Fetch and display bookmarks
+        async function loadBookmarks() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/bookmarks`);
+                const data = await response.json();
+                if (data.success) {
+                    const tableBody = document.querySelector('#bookmarksTable tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    data.bookmarks.forEach(bookmark => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${bookmark.description}</td>
+                            <td><a href="${bookmark.link}" target="_blank">${bookmark.link}</a></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                } else {
+                    alert('Failed to load bookmarks');
+                }
+            } catch (error) {
+                console.error('Error fetching bookmarks:', error);
+            }
+        }
+        // Add a new bookmark
+        async function addBookmark() {
             const description = document.getElementById('newDescription').value.trim();
             const link = document.getElementById('newLink').value.trim();
             if (!description || !link) {
                 alert('Please fill in both fields.');
                 return;
             }
-            // Send data to the backend
-            fetch('https://dashboard-backend-zu2y.onrender.com/add-bookmark', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ description, link }),
-            })
-            .then(response => response.json())
-            .then(data => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/add-bookmark`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ description, link }),
+                });
+                const data = await response.json();
                 if (data.success) {
                     alert('Bookmark added successfully!');
-                    location.reload();
+                    await loadBookmarks(); // Reload the bookmarks
                 } else {
                     alert('Error: ' + data.error);
                 }
-            })
-            .catch(error => console.error('Error:', error));
+            } catch (error) {
+                console.error('Error adding bookmark:', error);
+            }
         }
+        // Load bookmarks on page load
+        document.addEventListener('DOMContentLoaded', loadBookmarks);
     </script>
 </body>
 </html>
