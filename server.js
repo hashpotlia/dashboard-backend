@@ -2,17 +2,36 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const cheerio = require('cheerio'); // Used to parse HTML
 const app = express();
 const PORT = process.env.PORT || 3000;
 // Path to the HTML file
 const HTML_FILE_PATH = path.join(__dirname, 'dashboard.html');
-// Middleware to handle JSON data and enable CORS
+// Middleware
 app.use(cors({ origin: '*' })); // Allow all origins (adjust if needed)
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 // Serve the static HTML file
 app.get('/', (req, res) => {
     res.sendFile(HTML_FILE_PATH);
+});
+// API to fetch all bookmarks
+app.get('/bookmarks', (req, res) => {
+    fs.readFile(HTML_FILE_PATH, 'utf-8', (err, data) => {
+        if (err) {
+            console.error('Error reading the file:', err);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+        // Use Cheerio to extract bookmarks
+        const $ = cheerio.load(data);
+        const bookmarks = [];
+        $('tbody tr').each((index, element) => {
+            const description = $(element).find('td').eq(0).text();
+            const link = $(element).find('td a').attr('href');
+            bookmarks.push({ description, link });
+        });
+        res.json({ success: true, bookmarks });
+    });
 });
 // API to add a new bookmark
 app.post('/add-bookmark', (req, res) => {
