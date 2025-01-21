@@ -244,9 +244,8 @@
             <button onclick="addBookmark()">Add</button>
         </div>
     </div>
-	<script>
-        // Backend API URL
-        const API_BASE_URL = 'https://dashboard-backend-zu2y.onrender.com';
+    <script>
+        const API_BASE_URL = 'https://dashboard-backend.onrender.com';
         // Fetch and display bookmarks
         async function loadBookmarks() {
             try {
@@ -255,11 +254,15 @@
                 if (data.success) {
                     const tableBody = document.querySelector('#bookmarksTable tbody');
                     tableBody.innerHTML = ''; // Clear existing rows
-                    data.bookmarks.forEach(bookmark => {
+                    data.bookmarks.forEach((bookmark, index) => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${bookmark.description}</td>
                             <td><a href="${bookmark.link}" target="_blank">${bookmark.link}</a></td>
+                            <td>
+                                <button onclick="editBookmark(${index}, '${bookmark.description}', '${bookmark.link}')">Edit</button>
+                                <button onclick="deleteBookmark(${index})">Delete</button>
+                            </td>
                         `;
                         tableBody.appendChild(row);
                     });
@@ -293,6 +296,48 @@
                 }
             } catch (error) {
                 console.error('Error adding bookmark:', error);
+            }
+        }
+        // Edit a bookmark
+        function editBookmark(index, currentDescription, currentLink) {
+            const newDescription = prompt('Edit description:', currentDescription);
+            const newLink = prompt('Edit link:', currentLink);
+            if (newDescription && newLink) {
+                fetch(`${API_BASE_URL}/edit-bookmark`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ index, newDescription, newLink }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Bookmark updated successfully!');
+                            loadBookmarks();
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error editing bookmark:', error));
+            }
+        }
+        // Delete a bookmark
+        function deleteBookmark(index) {
+            if (confirm('Are you sure you want to delete this bookmark?')) {
+                fetch(`${API_BASE_URL}/delete-bookmark`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ index }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Bookmark deleted successfully!');
+                            loadBookmarks();
+                        } else {
+                            alert('Error: ' + data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error deleting bookmark:', error));
             }
         }
         // Load bookmarks on page load
