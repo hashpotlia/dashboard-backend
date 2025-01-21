@@ -6,10 +6,11 @@ const cheerio = require('cheerio');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HTML_FILE_PATH = path.join(__dirname, 'dashboard.html');
+// Middleware
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
-// Fetch bookmarks
+// Fetch all bookmarks
 app.get('/bookmarks', (req, res) => {
     fs.readFile(HTML_FILE_PATH, 'utf-8', (err, data) => {
         if (err) return res.status(500).json({ error: 'Internal Server Error' });
@@ -24,7 +25,7 @@ app.get('/bookmarks', (req, res) => {
         res.json({ success: true, bookmarks });
     });
 });
-// Add bookmark
+// Add a new bookmark
 app.post('/add-bookmark', (req, res) => {
     const { description, link, altText } = req.body;
     if (!description || !link) {
@@ -45,7 +46,7 @@ app.post('/add-bookmark', (req, res) => {
         });
     });
 });
-// Edit bookmark
+// Edit a bookmark
 app.put('/edit-bookmark', (req, res) => {
     const { index, description, link, altText } = req.body;
     fs.readFile(HTML_FILE_PATH, 'utf-8', (err, data) => {
@@ -61,6 +62,22 @@ app.put('/edit-bookmark', (req, res) => {
         });
     });
 });
+// Delete a bookmark
+app.delete('/delete-bookmark', (req, res) => {
+    const { index } = req.body;
+    fs.readFile(HTML_FILE_PATH, 'utf-8', (err, data) => {
+        if (err) return res.status(500).json({ error: 'Internal Server Error' });
+        const $ = cheerio.load(data);
+        const row = $('tbody tr').eq(index);
+        if (!row.length) return res.status(404).json({ error: 'Bookmark not found' });
+        row.remove();
+        fs.writeFile(HTML_FILE_PATH, $.html(), 'utf-8', err => {
+            if (err) return res.status(500).json({ error: 'Internal Server Error' });
+            res.json({ success: true });
+        });
+    });
+});
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
