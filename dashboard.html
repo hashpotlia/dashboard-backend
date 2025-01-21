@@ -64,12 +64,13 @@
             <h3>Add New Bookmark</h3>
             <input type="text" id="newDescription" placeholder="Enter description">
             <input type="text" id="newLink" placeholder="Enter link (e.g., https://example.com)">
+            <input type="text" id="newAltText" placeholder="Enter alt text (e.g., Click Here)">
             <button onclick="addBookmark()">Add</button>
         </div>
     </div>
     <script>
         const API_BASE_URL = 'https://dashboard-backend-zu2y.onrender.com';
-        // Fetch and display bookmarks
+        // Load bookmarks from the backend
         async function loadBookmarks() {
             try {
                 const response = await fetch(`${API_BASE_URL}/bookmarks`);
@@ -81,9 +82,9 @@
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${bookmark.description}</td>
-                            <td><a href="${bookmark.link}" target="_blank">${bookmark.link}</a></td>
+                            <td><a href="${bookmark.link}" target="_blank">${bookmark.altText || 'Visit Link'}</a></td>
                             <td>
-                                <button onclick="editBookmark(${index}, '${bookmark.description}', '${bookmark.link}')">Edit</button>
+                                <button onclick="editBookmark(${index}, '${bookmark.description}', '${bookmark.link}', '${bookmark.altText}')">Edit</button>
                                 <button onclick="deleteBookmark(${index})">Delete</button>
                             </td>
                         `;
@@ -93,77 +94,81 @@
                     alert('Failed to load bookmarks');
                 }
             } catch (error) {
-                console.error('Error fetching bookmarks:', error);
+                console.error('Error loading bookmarks:', error);
             }
         }
         // Add a new bookmark
         async function addBookmark() {
             const description = document.getElementById('newDescription').value.trim();
             const link = document.getElementById('newLink').value.trim();
+            const altText = document.getElementById('newAltText').value.trim();
             if (!description || !link) {
-                alert('Please fill in both fields.');
+                alert('Please fill in both the description and link fields.');
                 return;
             }
             try {
                 const response = await fetch(`${API_BASE_URL}/add-bookmark`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ description, link }),
+                    body: JSON.stringify({ description, link, altText }),
                 });
                 const data = await response.json();
                 if (data.success) {
                     alert('Bookmark added successfully!');
-                    await loadBookmarks(); // Reload the bookmarks
+                    loadBookmarks(); // Reload the bookmarks
                 } else {
-                    alert('Error: ' + data.error);
+                    alert('Error adding bookmark');
                 }
             } catch (error) {
                 console.error('Error adding bookmark:', error);
             }
         }
         // Edit a bookmark
-        function editBookmark(index, currentDescription, currentLink) {
+        async function editBookmark(index, currentDescription, currentLink, currentAltText) {
             const newDescription = prompt('Edit description:', currentDescription);
             const newLink = prompt('Edit link:', currentLink);
+            const newAltText = prompt('Edit alt text:', currentAltText);
             if (newDescription && newLink) {
-                fetch(`${API_BASE_URL}/edit-bookmark`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index, newDescription, newLink }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Bookmark updated successfully!');
-                            loadBookmarks();
-                        } else {
-                            alert('Error: ' + data.error);
-                        }
-                    })
-                    .catch(error => console.error('Error editing bookmark:', error));
+                try {
+                    const response = await fetch(`${API_BASE_URL}/edit-bookmark`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ index, description: newDescription, link: newLink, altText: newAltText }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Bookmark updated successfully!');
+                        loadBookmarks();
+                    } else {
+                        alert('Error editing bookmark');
+                    }
+                } catch (error) {
+                    console.error('Error editing bookmark:', error);
+                }
             }
         }
         // Delete a bookmark
-        function deleteBookmark(index) {
+        async function deleteBookmark(index) {
             if (confirm('Are you sure you want to delete this bookmark?')) {
-                fetch(`${API_BASE_URL}/delete-bookmark`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ index }),
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert('Bookmark deleted successfully!');
-                            loadBookmarks();
-                        } else {
-                            alert('Error: ' + data.error);
-                        }
-                    })
-                    .catch(error => console.error('Error deleting bookmark:', error));
+                try {
+                    const response = await fetch(`${API_BASE_URL}/delete-bookmark`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ index }),
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Bookmark deleted successfully!');
+                        loadBookmarks();
+                    } else {
+                        alert('Error deleting bookmark');
+                    }
+                } catch (error) {
+                    console.error('Error deleting bookmark:', error);
+                }
             }
         }
-        // Load bookmarks on page load
+        // Load bookmarks when the page loads
         document.addEventListener('DOMContentLoaded', loadBookmarks);
     </script>
 </body>
